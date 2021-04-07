@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# Project: coursework_actual
+# Project: coursework
 # Configurations: Debug
 # =============================================================================
 
@@ -58,36 +58,37 @@ build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
 build edit_cache: phony CMakeFiles/edit_cache.util
 
 # =============================================================================
-# Object build statements for EXECUTABLE target coursework_actual
+# Object build statements for EXECUTABLE target coursework
 
 
 #############################################
-# Order-only phony target for coursework_actual
+# Order-only phony target for coursework
 
-build cmake_object_order_depends_target_coursework_actual: phony || CMakeFiles/coursework_actual.dir
+build cmake_object_order_depends_target_coursework: phony || CMakeFiles/coursework.dir
 
-build CMakeFiles/coursework_actual.dir/main.cpp.o: CXX_COMPILER__coursework_actual_Debug ../main.cpp || cmake_object_order_depends_target_coursework_actual
-  DEP_FILE = CMakeFiles/coursework_actual.dir/main.cpp.o.d
-  FLAGS = -g
-  OBJECT_DIR = CMakeFiles/coursework_actual.dir
-  OBJECT_FILE_DIR = CMakeFiles/coursework_actual.dir
+build CMakeFiles/coursework.dir/main.cpp.o: CXX_COMPILER__coursework_Debug ../main.cpp || cmake_object_order_depends_target_coursework
+  DEP_FILE = CMakeFiles/coursework.dir/main.cpp.o.d
+  FLAGS = -g -lpthread
+  INCLUDES = -I../support -isystem /usr/include/vlc
+  OBJECT_DIR = CMakeFiles/coursework.dir
+  OBJECT_FILE_DIR = CMakeFiles/coursework.dir
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target coursework_actual
+# Link build statements for EXECUTABLE target coursework
 
 
 #############################################
-# Link the executable coursework_actual
+# Link the executable coursework
 
-build coursework_actual: CXX_EXECUTABLE_LINKER__coursework_actual_Debug CMakeFiles/coursework_actual.dir/main.cpp.o
+build coursework: CXX_EXECUTABLE_LINKER__coursework_Debug CMakeFiles/coursework.dir/main.cpp.o | /usr/lib64//libvlc.so
   FLAGS = -g
-  LINK_FLAGS = -rdynamic
-  OBJECT_DIR = CMakeFiles/coursework_actual.dir
+  LINK_LIBRARIES = /usr/lib64//libvlc.so  -lpthread
+  OBJECT_DIR = CMakeFiles/coursework.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_FILE = coursework_actual
-  TARGET_PDB = coursework_actual.dbg
+  TARGET_FILE = coursework
+  TARGET_PDB = coursework.dbg
 
 # =============================================================================
 # Target aliases.
@@ -100,12 +101,7 @@ build coursework_actual: CXX_EXECUTABLE_LINKER__coursework_actual_Debug CMakeFil
 #############################################
 # Folder: /home/trofchik/Documents/cpp/coursework_actual/build
 
-build all: phony coursework_actual
-
-# =============================================================================
-# Unknown Build Time Dependencies.
-# Tell Ninja that they may appear as side effects of build rules
-# otherwise ordered by order-only dependencies.
+build all: phony coursework
 
 # =============================================================================
 # Built-in targets

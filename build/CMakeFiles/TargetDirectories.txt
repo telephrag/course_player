@@ -1,3 +1,3 @@
 /home/trofchik/Documents/cpp/coursework_actual/build/CMakeFiles/rebuild_cache.dir
 /home/trofchik/Documents/cpp/coursework_actual/build/CMakeFiles/edit_cache.dir
-/home/trofchik/Documents/cpp/coursework_actual/build/CMakeFiles/coursework_actual.dir
+/home/trofchik/Documents/cpp/coursework_actual/build/CMakeFiles/coursework.dir

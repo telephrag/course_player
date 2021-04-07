@@ -1,2 +1,38 @@
+[CMake]
+Build Directory Count=1
+Current Build Directory Index-Host System=0
+
+[CMake][CMake Build Directory 0]
+Build Directory Path=/home/trofchik/Documents/cpp/coursework_actual/build
+Build Type=Debug
+CMake Binary=/usr/bin/cmake
+CMake Executable=/usr/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=/usr/local
+Runtime=Host System
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=coursework
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=
+Executable=file:///home/trofchik/Documents/cpp/coursework_actual
+External Terminal=gnome-terminal -e %exe
+Kill Before Executing Again=4194304
+Project Target=coursework_actual,coursework
+Use External Terminal=true
+Working Directory=
+isExecutable=false
+
 [Project]
 VersionControlSupport=
