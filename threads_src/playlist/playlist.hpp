@@ -9,8 +9,9 @@
 class Playlist // TODO: Maybe I should use json 
 {
 private:
+    
     std::vector<std::string> url_vector;
-    std::string location = "";
+    std::string location = ""; // NOTE: File with URL must be placed into executable directory (build in this case)
 
 public:
     
@@ -18,6 +19,7 @@ public:
     {
         this->location = location;
     }
+    
     
     void parse_file_with_urls()
     {
@@ -29,7 +31,7 @@ public:
         
         if (!file)
         {
-            std::cout << "Error opening file \n";
+            std::cout << "Error opening file. Abborting. \n";
             return;
         }
         
@@ -41,11 +43,18 @@ public:
         }
     }
     
+    
     void print()
     {
         for (auto song: this->url_vector)
         {
             std::cout << song << "\n";
         }
+    }
+    
+    
+    std::vector<std::string> get_result()
+    {
+        return this->url_vector;
     }
 };

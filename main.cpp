@@ -5,22 +5,34 @@
 #include <vlc/vlc.h>
 #include <vlcpp/vlc.hpp>
 
-#include "threads_src/support/support.hpp"
+#include "threads_src/playlist/support.hpp"
+#include "threads_src/play/play.hpp"
+
+std::mutex m;
+
+std::shared_ptr<VLC::Instance> instance;
+std::shared_ptr<VLC::MediaPlayer> player;
 
 int main() {
-    std::string location = "home/trofchik/Documents/cpp/coursework_actual/threads_src/support/sample_playlist";
+    std::string location = "sample_playlist.txt";
     
-    std::promise<Playlist> playlist_promise;
-    std::future<Playlist> playlist_future = playlist_promise.get_future();
+    // Player initialization
     
-    std::thread suport_thread(support, std::move(playlist_promise), location);
+#define custom_logs 1
+#if custom_logs
+    const char *const arg[] = {"--preferred-resolution=720", "--no-video", "--loop"};
+    instance = std::make_shared<VLC::Instance>(VLC::Instance(3, arg));
+#else
+    const char *const arg[] = {"--preferred-resolution=720", "--no-video", "-vv", "--loop"};
+    instance = std::make_shared<VLC::Instance>(VLC::Instance(4, arg));
+#endif
     
-    Playlist playlist = playlist_future.get();
-    playlist.parse_file_with_urls();
-    playlist.print();
+      player = std::make_shared<VLC::MediaPlayer>(VLC::MediaPlayer(*instance));
+    std::thread play_thread(play_music, player, instance); 
+    // TODO: Figure out how to pass new playlist into this thread. Condition varialbe?
     
-    suport_thread.join();
-    
+    // Cleaning up after ending the programm
+    play_thread.join();
     std::cin.get();
     
     return 0;
