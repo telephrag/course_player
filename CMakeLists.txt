@@ -22,4 +22,5 @@ set_target_properties(libvlc PROPERTIES
 target_compile_options(coursework PRIVATE -lpthread)
  target_link_libraries(coursework PRIVATE pthread)
 
-target_include_directories(coursework PRIVATE support/)
+target_include_directories(coursework PRIVATE threads_src/playlist/)
+target_include_directories(coursework PRIVATE threads_src/play/)

@@ -3,15 +3,19 @@
 
 #include <memory>
 #include <future>
-#include <atomic>
 
 #include <vlcpp/vlc.hpp>
+
+#include "common.hpp"
+
 
 std::shared_ptr<VLC::Media> parse_into_media(
     const std::string mrl,
     std::shared_ptr<VLC::Instance> instance 
     )
 {
+    std::unique_lock<std::mutex> ul (mtx);
+    
     VLC::Media song = VLC::Media(*instance, mrl, VLC::Media::FromLocation);
     
     song.parseWithOptions(VLC::Media::ParseFlags::Network, -1); // TODO: Code handler for when parsing failed
@@ -55,6 +59,12 @@ void play_music(
         std::this_thread::sleep_for( std::chrono::milliseconds(duration) );
         std::cout << "Parsed song with the duration: " << duration << "ms \n";
     }
+    
+    /*
+     Consider: 
+     After parsing the media make the player play in a separate thread via async.
+     Then define user controls in a parent thread. For example kill thread if you want to stop playback.
+     */
 }
 
 

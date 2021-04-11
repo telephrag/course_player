@@ -69,7 +69,7 @@ build cmake_object_order_depends_target_coursework: phony || CMakeFiles/coursewo
 build CMakeFiles/coursework.dir/main.cpp.o: CXX_COMPILER__coursework_Debug ../main.cpp || cmake_object_order_depends_target_coursework
   DEP_FILE = CMakeFiles/coursework.dir/main.cpp.o.d
   FLAGS = -g -lpthread
-  INCLUDES = -I../support -isystem /usr/include/vlc
+  INCLUDES = -I../threads_src/playlist -I../threads_src/play -isystem /usr/include/vlc
   OBJECT_DIR = CMakeFiles/coursework.dir
   OBJECT_FILE_DIR = CMakeFiles/coursework.dir
 
