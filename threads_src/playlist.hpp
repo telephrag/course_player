@@ -44,6 +44,12 @@ public:
     }
     
     
+    int get_length()
+    {
+        return url_vector.size();
+    }
+    
+    
     void print()
     {
         for (auto song: this->url_vector)

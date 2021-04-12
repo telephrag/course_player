@@ -7,18 +7,27 @@
 #include <vlcpp/vlc.hpp>
 
 #include "common.hpp"
+#include "support.hpp"
 
+extern std::mutex mtx;
+extern int current_played;
+
+class Player
+{
+    VLC::MediaPlayer player;
+    Playlist playlist;
+};
 
 std::shared_ptr<VLC::Media> parse_into_media(
     const std::string mrl,
     std::shared_ptr<VLC::Instance> instance 
     )
 {
-    std::unique_lock<std::mutex> ul (mtx);
+    //std::unique_lock<std::mutex> ul (mtx);
     
     VLC::Media song = VLC::Media(*instance, mrl, VLC::Media::FromLocation);
     
-    song.parseWithOptions(VLC::Media::ParseFlags::Network, -1); // TODO: Code handler for when parsing failed
+    song.parseWithOptions(VLC::Media::ParseFlags::Network, -1); 
     
     while (song.parsedStatus() != VLC::Media::ParsedStatus::Done)
     {
@@ -47,7 +56,8 @@ void play_music(
     
     std::vector<std::string> song_vector = playlist.get_result();
     
-    for (auto song_mrl : song_vector)
+    // TODO Use iterator, for iterating over vector. Change its position when you want to change tracks.
+    for (auto song_mrl : song_vector) 
     {
         std::shared_ptr<VLC::Media> parsed_song = parse_into_media(song_mrl, instance);
         player->setMedia(*parsed_song);
@@ -58,6 +68,8 @@ void play_music(
         int duration = parsed_song->duration();
         std::this_thread::sleep_for( std::chrono::milliseconds(duration) );
         std::cout << "Parsed song with the duration: " << duration << "ms \n";
+        
+        // TODO Block thread here and wait for an input?
     }
     
     /*

@@ -7,6 +7,7 @@
 
 #include "threads_src/support.hpp"
 #include "threads_src/play.hpp"
+#include "threads_src/video_controls.hpp"
 #include "threads_src/common.hpp"
 
 extern std::mutex mtx;
@@ -46,9 +47,11 @@ int main() {
     
     player = std::make_shared<VLC::MediaPlayer>(VLC::MediaPlayer(*instance));
     std::thread play_thread(play_music, player, instance); 
+    std::thread video_control(listen_for_input);
     // TODO: Figure out how to pass new playlist into this thread. Condition varialbe?
     // TODO: Restructure project directory.
     // TODO: Create a "makeshift" user controls.
+    // TODO: Encapsulate player and playlist into a single class?
     
     // Cleaning up after ending the programm
     play_thread.join();
