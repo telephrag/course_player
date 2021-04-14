@@ -8,15 +8,11 @@
 
 #include "common.hpp"
 #include "support.hpp"
+#include "video_controls.hpp"
 
 extern std::mutex mtx;
 extern int current_played;
-
-class Player
-{
-    VLC::MediaPlayer player;
-    Playlist playlist;
-};
+extern std::condition_variable cond_var;
 
 std::shared_ptr<VLC::Media> parse_into_media(
     const std::string mrl,
@@ -42,12 +38,8 @@ std::shared_ptr<VLC::Media> parse_into_media(
 }
 
 
-void play_music(
-    std::shared_ptr<VLC::MediaPlayer> player,
-    std::shared_ptr<VLC::Instance> instance
-)
+void play_music()
 { 
-    // TODO: Make on thread and reuse it for both getting new plalist and parsing next songs?
     // NOTE: Async plalist retrieval might not be needed if I decide to stop music when user decide to switch playlist
     auto playlist_future = std::async(std::launch::async, support, "sample_playlist.txt");
     Playlist playlist = playlist_future.get();
@@ -55,28 +47,32 @@ void play_music(
     playlist.print();
     
     std::vector<std::string> song_vector = playlist.get_result();
-    
-    // TODO Use iterator, for iterating over vector. Change its position when you want to change tracks.
-    for (auto song_mrl : song_vector) 
+     
+    std::unique_lock<std::mutex> ulm (mtx); // NOTE Do I need a lock here?
+    while(true)
     {
+        std::string song_mrl = song_vector.at(current_played);
         std::shared_ptr<VLC::Media> parsed_song = parse_into_media(song_mrl, instance);
         player->setMedia(*parsed_song);
         player->play();
         
-        
         std::this_thread::sleep_for( std::chrono::milliseconds(1000) );
         int duration = parsed_song->duration();
-        std::this_thread::sleep_for( std::chrono::milliseconds(duration) );
-        std::cout << "Parsed song with the duration: " << duration << "ms \n";
+        cond_var.wait_for(
+            ulm,
+            std::chrono::milliseconds(duration),
+            []{ return input_sent; }
+        );
+        if (input_sent) 
+        {
+            input_sent = false;
+            handle_input();
+            current_input = "";
+            continue;
+        }
         
-        // TODO Block thread here and wait for an input?
+        current_played++;
     }
-    
-    /*
-     Consider: 
-     After parsing the media make the player play in a separate thread via async.
-     Then define user controls in a parent thread. For example kill thread if you want to stop playback.
-     */
 }
 
 

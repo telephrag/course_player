@@ -46,7 +46,7 @@ int main() {
 #endif
     
     player = std::make_shared<VLC::MediaPlayer>(VLC::MediaPlayer(*instance));
-    std::thread play_thread(play_music, player, instance); 
+    std::thread play_thread(play_music); 
     std::thread video_control(listen_for_input);
     // TODO: Figure out how to pass new playlist into this thread. Condition varialbe?
     // TODO: Restructure project directory.
