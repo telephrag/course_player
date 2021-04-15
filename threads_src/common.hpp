@@ -18,13 +18,13 @@ std::shared_ptr<VLC::Instance> instance;
 std::shared_ptr<VLC::MediaPlayer> player; 
 
 Playlist current_playlist;
-int current_played = 0;
+unsigned int current_played = 0;
 bool input_sent = false;
 std::string current_input = "";
 
-const int INPUT_SIGNAL_COUNT = 4;
-std::array<std::string, INPUT_SIGNAL_COUNT> input_signals = { "next", "prev", "stop", "playlist" };
-enum Input { next, prev, stop, playlist };
+const int INPUT_SIGNAL_COUNT = 3;
+std::array<std::string, INPUT_SIGNAL_COUNT> input_signals = { "next", "prev", "playlist" };
+enum Input { next, prev, playlist };
 
 std::map<std::string, Input> input_map;
 

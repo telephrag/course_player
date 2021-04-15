@@ -24,7 +24,7 @@ public:
     void parse_file_with_urls()
     {
         if (location.length() == 0)
-            throw "No file location was specified. Aborting.";
+            std::cout << "No file location was specified. Aborting.\n";
         
         std::ifstream file;
         file.open(location, std::ios::in);
@@ -41,6 +41,14 @@ public:
             std::getline(file, temp);
             url_vector.push_back(temp);
         }
+        
+        url_vector.pop_back(); // poping back last element which is empty string
+    }
+    
+    
+    std::string get(unsigned int index)
+    {
+        return url_vector.at(index);
     }
     
     

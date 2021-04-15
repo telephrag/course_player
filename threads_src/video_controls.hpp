@@ -2,16 +2,20 @@
 #pragma once
 
 #include "common.hpp"
+#include "video_controls.hpp"
 
 extern std::map<std::string, Input> input_map;
 extern std::shared_ptr<VLC::MediaPlayer> player;
 extern std::array<std::string, INPUT_SIGNAL_COUNT> input_signals;
 extern std::mutex mtx;
 
+extern unsigned int current_played;
+extern Playlist current_playlist;
+
 void next_track();
 void prev_track();
-void stop_playback();
 void set_playlist();
+void handle_input();
 
 bool is_input_code(std::string code)
 {
@@ -38,6 +42,7 @@ void listen_for_input()
             std::lock_guard<std::mutex> lgm (mtx);
             input_sent = true;
             current_input = input;
+            handle_input();
             cond_var.notify_one();
         }
     }
@@ -53,9 +58,6 @@ void handle_input()
         case prev:
             prev_track();
             break;
-        case stop:
-            stop_playback();
-            break;
         case playlist:
             set_playlist();
             break;
@@ -65,21 +67,36 @@ void handle_input()
 void next_track()
 {
     std::cout << "Switching to next track.\n";
+    if (current_played >= current_playlist.get_length() - 1)
+    {
+        current_played = 0;
+    }
+    else
+    {
+        current_played++;
+    }
 }
 
 void prev_track()
 {
     std::cout << "Switching to previous track.\n";
-}
-
-void stop_playback()
-{
-    std::cout << "Aborting playback.\n";
-    player->stop();
+    if (current_played <= 0)
+    {
+        current_played = current_playlist.get_length() - 1;
+    }
+    else
+    {
+        current_played--;
+    }
 }
 
 void set_playlist()
 {
     std::cout << "Changing current playlist.\n";
+    std::string next_playlist_location;
+    std::cout << "Input the next playlist location: "; std::cin >> next_playlist_location;
+    
+    current_playlist = support(next_playlist_location);
+    current_played = 0;
 }
 
