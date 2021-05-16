@@ -10,28 +10,12 @@
 #include "threads_src/video_controls.hpp"
 #include "threads_src/common.hpp"
 
-extern std::mutex mtx;
-extern std::condition_variable cond_var;
-
-extern std::map<std::string, Input> input_map;
-
-extern std::shared_ptr<VLC::Instance> instance;
+extern std::shared_ptr<VLC::Instance> instance; 
 extern std::shared_ptr<VLC::MediaPlayer> player; 
 // TODO: Make playlist variable global.
-
-
-void init_input_map()
-{
-    input_map = {
-        {"next", Input::next}, 
-        {"prev", Input::prev},
-    {"playlist", Input::playlist}
-    };
-}
-
-
+    
+    
 int main() {
-    init_input_map();
     std::string location = "sample_playlist.txt";
     
 #define custom_logs 1
@@ -47,7 +31,7 @@ int main() {
     player = std::make_shared<VLC::MediaPlayer>(VLC::MediaPlayer(*instance));
     std::thread play_thread(play_music); 
     std::thread control_thread(listen_for_input);
-
+    
     // TODO: Encapsulate player and playlist into a single class?
     
     play_thread.join();

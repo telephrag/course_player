@@ -1,19 +1,40 @@
 
 #pragma once
 
-#include "common.hpp"
-#include "video_controls.hpp"
+#include "support.hpp"
+#include "manage_db.hpp"
 
-extern std::map<std::string, Input> input_map;
+enum Input 
+{ 
+    next, 
+    prev, 
+    pause,
+    playlist 
+};
+
+const int INPUT_SIGNAL_COUNT = 4;
+const std::array<std::string, INPUT_SIGNAL_COUNT> input_signals{{ "next", "prev", "pause", "playlist" }};
+
+std::map<std::string, Input> input_map = {
+        { "next",     Input::next     }, 
+        { "prev",     Input::prev     },
+        { "pause",    Input::pause    },
+        { "playlist", Input::playlist }
+    };
+    
+std::string current_input = "";
+extern bool input_sent;
+    
 extern std::shared_ptr<VLC::MediaPlayer> player;
-extern std::array<std::string, INPUT_SIGNAL_COUNT> input_signals;
 extern std::mutex mtx;
+extern std::condition_variable cond_var;
 
 extern unsigned int current_played;
 extern Playlist current_playlist;
 
 void next_track();
 void prev_track();
+void pause_playback();
 void set_playlist();
 void handle_input();
 
@@ -43,6 +64,7 @@ void listen_for_input()
             input_sent = true;
             current_input = input;
             handle_input();
+            current_input = "";
             cond_var.notify_one();
         }
     }
@@ -57,6 +79,9 @@ void handle_input()
             break;
         case prev:
             prev_track();
+            break;
+        case pause:
+            //pause_playback();
             break;
         case playlist:
             set_playlist();
@@ -90,13 +115,15 @@ void prev_track()
     }
 }
 
+void pause_playback()
+{
+    std::cout << "Pausign playback.\n";
+}
+
 void set_playlist()
 {
     std::cout << "Changing current playlist.\n";
-    std::string next_playlist_location;
-    std::cout << "Input the next playlist location: "; std::cin >> next_playlist_location;
-    
-    current_playlist = support(next_playlist_location);
+    manage_playlists();
     current_played = 0;
 }
 

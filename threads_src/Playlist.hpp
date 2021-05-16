@@ -20,6 +20,11 @@ public:
         this->location = location;
     }
     
+    void ser_url_list(std::vector<std::string> url_vector)
+    {
+        this->url_vector = url_vector;
+    }
+
     
     void parse_file_with_urls()
     {
