@@ -1,12 +1,12 @@
 [
 {
   "directory": "/home/trofchik/Documents/cpp/coursework_actual/build",
-  "command": "/usr/bin/c++ -isystem /usr/include/vlc -g -l sqlite3 -lpthread -o CMakeFiles/coursework.dir/main.cpp.o -c /home/trofchik/Documents/cpp/coursework_actual/main.cpp",
+  "command": "/usr/bin/c++ -isystem /usr/include/vlc -isystem /usr/include/python3.9 -g -l sqlite3 -lpthread -o CMakeFiles/coursework.dir/main.cpp.o -c /home/trofchik/Documents/cpp/coursework_actual/main.cpp",
   "file": "/home/trofchik/Documents/cpp/coursework_actual/main.cpp"
 },
 {
   "directory": "/home/trofchik/Documents/cpp/coursework_actual/build",
-  "command": "/usr/bin/c++ -isystem /usr/include/vlc -g -l sqlite3 -lpthread -o CMakeFiles/coursework.dir/threads_src/Session.cpp.o -c /home/trofchik/Documents/cpp/coursework_actual/threads_src/Session.cpp",
+  "command": "/usr/bin/c++ -isystem /usr/include/vlc -isystem /usr/include/python3.9 -g -l sqlite3 -lpthread -o CMakeFiles/coursework.dir/threads_src/Session.cpp.o -c /home/trofchik/Documents/cpp/coursework_actual/threads_src/Session.cpp",
   "file": "/home/trofchik/Documents/cpp/coursework_actual/threads_src/Session.cpp"
 }
 ]

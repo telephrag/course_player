@@ -86,11 +86,15 @@ int manage_playlists()
             case login:
             {
                 session.login_func();
-                logged(session);
-                break;
+                {
+                    if(logged(session) == 1)
+                        return 0;
+                    break;
+                }
             }
 
             case quit:
+                sqlite3_close(db);
                 return 0;
 
             default:

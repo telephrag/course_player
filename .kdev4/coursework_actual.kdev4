@@ -26,13 +26,21 @@ Type=Native Application
 
 [Launch][Launch Configuration 0][Data]
 Arguments=
+Debugger Shell=
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 Dependency Action=Nothing
-EnvironmentGroup=
+Display Demangle Names=true
+Display Static Members=false
+EnvironmentGroup=coursework_actual
 Executable=file:///home/trofchik/Documents/cpp/coursework_actual
-External Terminal=gnome-terminal -e %exe
+External Terminal=xterm -hold -e %exe
+GDB Path=
 Kill Before Executing Again=4194304
 Project Target=coursework_actual,coursework
+Remote GDB Config Script=
+Remote GDB Run Script=
+Remote GDB Shell Script=
+Start With=GdbConsole
 Use External Terminal=true
 Working Directory=
 isExecutable=false

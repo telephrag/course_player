@@ -6,8 +6,8 @@ project(
         LANGUAGES CXX C 
         )
 
-set(LIBVLC_HEADERS /usr/include/vlc)
-set(LIBVLC_STATIC  /usr/lib64)
+set(LIBVLC_HEADERS /usr/include/vlc )
+set(LIBVLC_STATIC  /usr/lib64       )
 
 add_library(libvlc SHARED IMPORTED GLOBAL)
 set_target_properties(libvlc PROPERTIES
@@ -16,8 +16,8 @@ set_target_properties(libvlc PROPERTIES
     LINKER_LANGUAGE C
     )
     
-set(SQLITE_HEADERS /usr/include)
-set(SQLITE_STATIC /usr/lib64)
+set(SQLITE_HEADERS /usr/include )
+set(SQLITE_STATIC  /usr/lib64   )
 
 add_library(sqlite SHARED IMPORTED GLOBAL)
 set_target_properties(sqlite PROPERTIES
@@ -25,12 +25,22 @@ set_target_properties(sqlite PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES ${SQLITE_HEADERS}
     LINKER_LANGUAGE C
     )
+
+set(PYTHON_HEADERS /usr/include/python3.9 )
+set(PYTHON_STATIC  /usr/lib64             )
+
+add_library(python_embeded SHARED IMPORTED GLOBAL)
+set_target_properties(python_embeded PROPERTIES
+    IMPORTED_LOCATION ${PYTHON_STATIC}/libpython3.9.so
+    INTERFACE_INCLUDE_DIRECTORIES ${PYTHON_HEADERS}
+    LINKER_LANGUAGE C
+    )
     
         add_executable(coursework main.cpp)
  set_target_properties(coursework PROPERTIES
     LINKER_LANGUAGE CXX
     )
-        target_sources(coursework PRIVATE #separate into different targets?
+        target_sources(coursework PRIVATE
             threads_src/common.hpp
             threads_src/common_sqlite.hpp
             threads_src/logged.hpp
@@ -39,7 +49,6 @@ set_target_properties(sqlite PROPERTIES
             threads_src/Playlist.hpp
             threads_src/Session.hpp
             threads_src/Session.cpp
-            #threads_src/support.hpp
             threads_src/video_controls.hpp
             )
     
@@ -50,4 +59,6 @@ target_compile_options(coursework PRIVATE sqlite3)
  target_link_libraries(coursework PRIVATE libvlc)
 target_compile_options(coursework PRIVATE -lpthread)
  target_link_libraries(coursework PRIVATE pthread)
+ 
+ target_link_libraries(coursework PRIVATE python_embeded)
           

@@ -8,7 +8,7 @@ enum Input
 { 
     next, 
     prev, 
-    pause,
+    stop,
     playlist 
 };
 
@@ -18,14 +18,13 @@ const std::array<std::string, INPUT_SIGNAL_COUNT> input_signals{{ "next", "prev"
 std::map<std::string, Input> input_map = {
         { "next",     Input::next     }, 
         { "prev",     Input::prev     },
-        { "pause",    Input::pause    },
+        { "pause",    Input::stop     },
         { "playlist", Input::playlist }
     };
     
 std::string current_input = "";
 extern bool input_sent;
     
-extern std::shared_ptr<VLC::MediaPlayer> player;
 extern std::mutex mtx;
 extern std::condition_variable cond_var;
 
@@ -80,7 +79,7 @@ void handle_input()
         case prev:
             prev_track();
             break;
-        case pause:
+        case stop:
             //pause_playback();
             break;
         case playlist:
@@ -125,5 +124,6 @@ void set_playlist()
     std::cout << "Changing current playlist.\n";
     manage_playlists();
     current_played = 0;
+    input_sent = false;
 }
 

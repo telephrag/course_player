@@ -19,7 +19,8 @@ enum CommandsLogged
     add_to_playlist,
     del_from_playlist,
     get_playlist,
-    del_user
+    del_user,
+    logout_and_quit
 };
 
 std::map<std::string, CommandsLogged> commandMapLogged = {
@@ -36,16 +37,17 @@ std::map<std::string, CommandsLogged> commandMapLogged = {
         { "addtoplaylist",   CommandsLogged::add_to_playlist   },
         { "delfromplaylist", CommandsLogged::del_from_playlist },
         { "getplaylist",     CommandsLogged::get_playlist      },
-        { "deluser",         CommandsLogged::del_user          }
+        { "deluser",         CommandsLogged::del_user          },
+        { "quit",            CommandsLogged::logout_and_quit   }
     };
 
 
-void logged(Session &session)
+int logged(Session &session)
 {
     if (!session.validate())
     {
         std::cout << "Invalid login credentials.\n";
-        return;
+        return 0;
     }
     
     for(;;)
@@ -116,12 +118,17 @@ void logged(Session &session)
             case del_user:
                 session.del_user();
                 session.~Session();
-                return;
+                return 0;
                 break;
             
             case logout:
                 session.~Session();
-                return;
+                return 0;
+                break;
+                
+            case logout_and_quit:
+                session.~Session();
+                return 1;
                 break;
 
             default:
