@@ -89,7 +89,6 @@ std::string get_play_mrl (
 
 void play_music()
 { 
-    input_sent = false;
     current_playlist = Playlist("");
     std::shared_ptr<VLC::Instance> instance;
     
@@ -114,6 +113,7 @@ void play_music()
         
         while(true)
         {
+            input_sent = false;
             std::cout << "Curerntly playing: " << current_played << "\n";
             
             std::string song_mrl = current_playlist.get(current_played);

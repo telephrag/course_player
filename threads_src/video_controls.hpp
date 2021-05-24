@@ -124,6 +124,6 @@ void set_playlist()
     std::cout << "Changing current playlist.\n";
     manage_playlists();
     current_played = 0;
-    input_sent = false;
+    //input_sent = false;
 }
 
