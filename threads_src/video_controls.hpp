@@ -1,8 +1,10 @@
 
 #pragma once
 
+#include "common.hpp"
 #include "support.hpp"
 #include "manage_db.hpp"
+#include <cstdlib>
 
 enum Input 
 { 
@@ -18,7 +20,7 @@ const std::array<std::string, INPUT_SIGNAL_COUNT> input_signals{{ "next", "prev"
 std::map<std::string, Input> input_map = {
         { "next",     Input::next     }, 
         { "prev",     Input::prev     },
-        { "pause",    Input::stop     },
+        { "stop",     Input::stop     },
         { "playlist", Input::playlist }
     };
     
@@ -33,7 +35,7 @@ extern Playlist current_playlist;
 
 void next_track();
 void prev_track();
-void pause_playback();
+void stop_playback();
 void set_playlist();
 void handle_input();
 
@@ -63,6 +65,8 @@ void listen_for_input()
             input_sent = true;
             current_input = input;
             handle_input();
+            
+            std::system("clear");
             current_input = "";
             cond_var.notify_one();
         }
@@ -114,9 +118,10 @@ void prev_track()
     }
 }
 
-void pause_playback()
+void stop_playback()
 {
-    std::cout << "Pausign playback.\n";
+    std::cout << "Stopping playback.\nTyping 'play' shall resume playback at the last played track.\n";
+    
 }
 
 void set_playlist()
@@ -124,6 +129,7 @@ void set_playlist()
     std::cout << "Changing current playlist.\n";
     manage_playlists();
     current_played = 0;
+    std::system("clear");
     //input_sent = false;
 }
 

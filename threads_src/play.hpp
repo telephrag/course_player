@@ -28,18 +28,14 @@ void wait_for_duration(
     const int n = 5;
     
     int duration = media.duration();
+    
     while (duration <= 0)
     {
         duration = media.duration();
         std::this_thread::sleep_for( std::chrono::milliseconds(1000) );
     }
     duration_promise.set_value(duration);
-}
-
-
-void py_init()
-{
-    
+    std::cout << "Duration received, starting playback.\n"; 
 }
 
 
@@ -65,7 +61,7 @@ std::string get_play_mrl (
     
     PyObject* result = PyObject_CallObject(function, args);                         
     
-    std::cout << "Module: " << Py_REFCNT(py_module) << "\nFunction: " << Py_REFCNT(function) << "\nResult: " << Py_REFCNT(result) << "\n";
+    //std::cout << "Module: " << Py_REFCNT(py_module) << "\nFunction: " << Py_REFCNT(function) << "\nResult: " << Py_REFCNT(result) << "\n";
     Py_ssize_t* size = nullptr; 
     wchar_t* play_mrl_wchar = PyUnicode_AsWideCharString(result, size); // TODO free memory
 
@@ -78,12 +74,28 @@ std::string get_play_mrl (
     Py_XDECREF(function);
     Py_XDECREF(args);
     Py_XDECREF(result);
+
+    //Py_Finalize(); uncommenting this will result in program crash at the second iteration of the loop
     
-    std::cout << "Module: " << Py_REFCNT(py_module) << "\nFunction: " << Py_REFCNT(function) << "\nResult: " << Py_REFCNT(result) << "\n";
+    //std::cout << "Module: " << Py_REFCNT(py_module) << "\nFunction: " << Py_REFCNT(function) << "\nResult: " << Py_REFCNT(result) << "\n";
     
-    std::cout << play_mrl_str << "\n";
+    //std::cout << play_mrl_str << "\n";
     return play_mrl_str;
-//     return song.subitems()->itemAtIndex(0);
+}
+
+
+std::string get_title(
+    std::shared_ptr<VLC::Instance> instance,
+    std::string song_mrl
+    ) 
+{
+    VLC::Media media = VLC::Media(*instance, song_mrl, VLC::Media::FromLocation);
+    
+    media.parseWithOptions(VLC::Media::ParseFlags::Network, -1);
+    while (media.parsedStatus() != VLC::Media::ParsedStatus::Done) {}
+
+    std::shared_ptr<VLC::Media> item = media.subitems()->itemAtIndex(0);
+    return item->meta(libvlc_meta_Title);
 }
 
 
@@ -114,15 +126,15 @@ void play_music()
         while(true)
         {
             input_sent = false;
-            std::cout << "Curerntly playing: " << current_played << "\n";
             
             std::string song_mrl = current_playlist.get(current_played);
             
             VLC::Media song = VLC::Media(*instance, get_play_mrl(song_mrl), VLC::Media::FromLocation);
+            std::cout << "Currently playing: \n" << current_played << ". " << get_title(instance, song_mrl) << "\n";
+
+            
             auto player = std::make_shared<VLC::MediaPlayer>(song);
             player->play();
-//             std::this_thread::sleep_for(std::chrono::seconds(30));
-
             
             std::promise<int> duration_promise;
             std::future<int> duration_future = duration_promise.get_future();
@@ -134,10 +146,10 @@ void play_music()
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
             
-            int duration = duration_future.get(); // TODO make use of future
+            int duration = duration_future.get(); // hadle error when future is received
             duration_waiter.join();
             
-                                                  // UPD: using futures results in terminate without exception, investigate
+            
             cond_var.wait_for(
                 ulm,
                 std::chrono::milliseconds(duration),

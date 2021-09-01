@@ -1,4 +1,7 @@
 
+#include <vlc/vlc.h>
+#include <vlcpp/vlc.hpp>
+
 #include "Session.hpp"
 #include "Playlist.hpp"
 
@@ -140,7 +143,7 @@ void Session::login_func()
 
     std::string password;
     std::cout << "Input the password: "; 
-    std::cin >> password;    
+    std::cin >> password;
 
     std::string sql =
         "SELECT UserID, Login, Password FROM User WHERE Login=" + 
@@ -575,6 +578,8 @@ int Session::playlist_retrieval_callback(
     )
 {
     std::vector<std::string>* mrls = static_cast< std::vector<std::string>* >(used);
+    
+    std::cout << "\n";
     
     for (int i = 0; i < argc; i++)
     {

@@ -6,6 +6,7 @@ project(
         LANGUAGES CXX C 
         )
 
+
 set(LIBVLC_HEADERS /usr/include/vlc )
 set(LIBVLC_STATIC  /usr/lib64       )
 
@@ -16,6 +17,7 @@ set_target_properties(libvlc PROPERTIES
     LINKER_LANGUAGE C
     )
     
+
 set(SQLITE_HEADERS /usr/include )
 set(SQLITE_STATIC  /usr/lib64   )
 
@@ -26,6 +28,7 @@ set_target_properties(sqlite PROPERTIES
     LINKER_LANGUAGE C
     )
 
+
 set(PYTHON_HEADERS /usr/include/python3.9 )
 set(PYTHON_STATIC  /usr/lib64             )
 
@@ -35,6 +38,7 @@ set_target_properties(python_embeded PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES ${PYTHON_HEADERS}
     LINKER_LANGUAGE C
     )
+    
     
         add_executable(coursework main.cpp)
  set_target_properties(coursework PROPERTIES
@@ -52,13 +56,16 @@ set_target_properties(python_embeded PROPERTIES
             threads_src/video_controls.hpp
             )
     
+    
 target_compile_options(coursework PRIVATE -l)
+
 target_compile_options(coursework PRIVATE sqlite3)
  target_link_libraries(coursework PRIVATE sqlite)
 
  target_link_libraries(coursework PRIVATE libvlc)
+
 target_compile_options(coursework PRIVATE -lpthread)
  target_link_libraries(coursework PRIVATE pthread)
  
  target_link_libraries(coursework PRIVATE python_embeded)
-          
+ 
