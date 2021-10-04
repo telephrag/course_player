@@ -20,22 +20,64 @@ extern std::condition_variable cond_var;
 extern bool input_sent;
 
 
+std::string get_title(
+    std::string song_mrl
+    ) 
+{
+    const char *const arg[] = {"--preferred-resolution=720", "--no-video"};
+    std::shared_ptr<VLC::Instance> dummy = std::make_shared<VLC::Instance>(VLC::Instance(2, arg));
+    
+    VLC::Media media = VLC::Media(*dummy, song_mrl, VLC::Media::FromLocation);
+    media.parseWithOptions(VLC::Media::ParseFlags::Network, -1);
+    
+    while (media.parsedStatus() != VLC::Media::ParsedStatus::Done) { }
+    
+    std::string result = media.subitems()->itemAtIndex(0)->meta(libvlc_meta_Title);
+    
+    return result;
+}
+
+
+void list_tracks()
+{
+    const int l = current_playlist.get_length();
+    
+    int left = current_played - 5;
+    if (left < 0) 
+        left = 0;
+    for (int i = left; i < current_played; i++)
+    {
+        std::cout << " " << i << ". " << get_title(current_playlist.get(i)) << std::endl;
+    }
+    
+    std::cout << ">" << current_played << ". " << get_title(current_playlist.get(current_played)) << std::endl;
+    
+    int right = current_played + 5;
+    if (right >= l)
+        right = l;
+    for (int i = current_played + 1; i < right; i++)
+    {
+        std::cout << " " << i << ". " << get_title(current_playlist.get(i)) << std::endl;
+    }
+}
+
+
 void wait_for_duration(
     std::promise<int>&& duration_promise,
     VLC::Media&& media
 )
 {
-    const int n = 5;
+    int duration = media.duration(); 
     
-    int duration = media.duration();
-    
-    while (duration <= 0)
+    while (duration <= 0)  
     {
+        std::cout << "Waiting for duration...\n";
         duration = media.duration();
         std::this_thread::sleep_for( std::chrono::milliseconds(1000) );
     }
     duration_promise.set_value(duration);
     std::cout << "Duration received, starting playback.\n"; 
+    std::this_thread::sleep_for( std::chrono::milliseconds(300) );
 }
 
 
@@ -61,10 +103,9 @@ std::string get_play_mrl (
     
     PyObject* result = PyObject_CallObject(function, args);                         
     
-    //std::cout << "Module: " << Py_REFCNT(py_module) << "\nFunction: " << Py_REFCNT(function) << "\nResult: " << Py_REFCNT(result) << "\n";
     Py_ssize_t* size = nullptr; 
     wchar_t* play_mrl_wchar = PyUnicode_AsWideCharString(result, size); // TODO free memory
-
+    
     std::wstring ws( play_mrl_wchar );
     std::string play_mrl_str( ws.begin(), ws.end() );
     delete [] play_mrl_wchar;
@@ -77,25 +118,7 @@ std::string get_play_mrl (
 
     //Py_Finalize(); uncommenting this will result in program crash at the second iteration of the loop
     
-    //std::cout << "Module: " << Py_REFCNT(py_module) << "\nFunction: " << Py_REFCNT(function) << "\nResult: " << Py_REFCNT(result) << "\n";
-    
-    //std::cout << play_mrl_str << "\n";
     return play_mrl_str;
-}
-
-
-std::string get_title(
-    std::shared_ptr<VLC::Instance> instance,
-    std::string song_mrl
-    ) 
-{
-    VLC::Media media = VLC::Media(*instance, song_mrl, VLC::Media::FromLocation);
-    
-    media.parseWithOptions(VLC::Media::ParseFlags::Network, -1);
-    while (media.parsedStatus() != VLC::Media::ParsedStatus::Done) {}
-
-    std::shared_ptr<VLC::Media> item = media.subitems()->itemAtIndex(0);
-    return item->meta(libvlc_meta_Title);
 }
 
 
@@ -104,20 +127,20 @@ void play_music()
     current_playlist = Playlist("");
     std::shared_ptr<VLC::Instance> instance;
     
-    #define custom_logs 1
-    #if custom_logs
-        const char *const arg[] = {"--preferred-resolution=720", "--no-video", "--loop"};
-        instance = std::make_shared<VLC::Instance>(VLC::Instance(3, arg));
+    #define min_logs 1
+    #if min_logs
+        const char *const arg[] = {"--preferred-resolution=720", "--no-video"};
+        instance = std::make_shared<VLC::Instance>(VLC::Instance(2, arg));
     #else
-        const char *const arg[] = {"--preferred-resolution=720", "--no-video", "-vv", "--loop"};
-        instance = std::make_shared<VLC::Instance>(VLC::Instance(4, arg));
+        const char *const arg[] = {"--preferred-resolution=720", "--no-video", "-vv"};
+        instance = std::make_shared<VLC::Instance>(VLC::Instance(3, arg));
     #endif
         
     std::unique_lock<std::mutex> ulm (mtx); 
     
     while (true)
     {
-        std::this_thread::sleep_for (std::chrono::seconds(1) );
+        std::this_thread::sleep_for (std::chrono::seconds(1));
         cond_var.wait(
             ulm,
             []{ return (current_playlist.get_length() > 0); }
@@ -130,8 +153,6 @@ void play_music()
             std::string song_mrl = current_playlist.get(current_played);
             
             VLC::Media song = VLC::Media(*instance, get_play_mrl(song_mrl), VLC::Media::FromLocation);
-            std::cout << "Currently playing: \n" << current_played << ". " << get_title(instance, song_mrl) << "\n";
-
             
             auto player = std::make_shared<VLC::MediaPlayer>(song);
             player->play();
@@ -142,13 +163,14 @@ void play_music()
             
             while (duration_future.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
             {
-                std::cout << "Waiting for duration...\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
             
+            std::system("clear");
+            list_tracks();
+            
             int duration = duration_future.get(); // hadle error when future is received
             duration_waiter.join();
-            
             
             cond_var.wait_for(
                 ulm,

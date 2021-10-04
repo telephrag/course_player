@@ -10,17 +10,16 @@ enum Input
 { 
     next, 
     prev, 
-    stop,
-    playlist 
+    playlist,
+    list
 };
 
-const int INPUT_SIGNAL_COUNT = 4;
-const std::array<std::string, INPUT_SIGNAL_COUNT> input_signals{{ "next", "prev", "pause", "playlist" }};
+const int INPUT_SIGNAL_COUNT = 3;
+const std::array<std::string, INPUT_SIGNAL_COUNT> input_signals{{ "next", "prev", "playlist" }};
 
 std::map<std::string, Input> input_map = {
         { "next",     Input::next     }, 
         { "prev",     Input::prev     },
-        { "stop",     Input::stop     },
         { "playlist", Input::playlist }
     };
     
@@ -35,9 +34,9 @@ extern Playlist current_playlist;
 
 void next_track();
 void prev_track();
-void stop_playback();
 void set_playlist();
 void handle_input();
+
 
 bool is_input_code(std::string code)
 {
@@ -49,6 +48,7 @@ bool is_input_code(std::string code)
     
     return false;
 }
+
 
 void listen_for_input()
 {
@@ -73,6 +73,7 @@ void listen_for_input()
     }
 }
 
+
 void handle_input()
 {
     switch (input_map[current_input])
@@ -82,9 +83,6 @@ void handle_input()
             break;
         case prev:
             prev_track();
-            break;
-        case stop:
-            //pause_playback();
             break;
         case playlist:
             set_playlist();
@@ -118,11 +116,6 @@ void prev_track()
     }
 }
 
-void stop_playback()
-{
-    std::cout << "Stopping playback.\nTyping 'play' shall resume playback at the last played track.\n";
-    
-}
 
 void set_playlist()
 {
@@ -132,4 +125,3 @@ void set_playlist()
     std::system("clear");
     //input_sent = false;
 }
-
