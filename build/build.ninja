@@ -12,7 +12,7 @@
 
 # =============================================================================
 # Project: coursework
-# Configurations: Debug
+# Configurations: Release
 # =============================================================================
 
 #############################################
@@ -24,7 +24,7 @@ ninja_required_version = 1.5
 #############################################
 # Set configuration variable for custom commands.
 
-CONFIGURATION = Debug
+CONFIGURATION = Release
 # =============================================================================
 # Include auxiliary files.
 
@@ -66,16 +66,16 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 
 build cmake_object_order_depends_target_coursework: phony || CMakeFiles/coursework.dir
 
-build CMakeFiles/coursework.dir/main.cpp.o: CXX_COMPILER__coursework_Debug ../main.cpp || cmake_object_order_depends_target_coursework
+build CMakeFiles/coursework.dir/main.cpp.o: CXX_COMPILER__coursework_Release ../main.cpp || cmake_object_order_depends_target_coursework
   DEP_FILE = CMakeFiles/coursework.dir/main.cpp.o.d
-  FLAGS = -g -l sqlite3 -lpthread
+  FLAGS = -O2 -DNDEBUG -l sqlite3 -lpthread
   INCLUDES = -isystem /usr/include/vlc -isystem /usr/include/python3.9
   OBJECT_DIR = CMakeFiles/coursework.dir
   OBJECT_FILE_DIR = CMakeFiles/coursework.dir
 
-build CMakeFiles/coursework.dir/threads_src/Session.cpp.o: CXX_COMPILER__coursework_Debug ../threads_src/Session.cpp || cmake_object_order_depends_target_coursework
+build CMakeFiles/coursework.dir/threads_src/Session.cpp.o: CXX_COMPILER__coursework_Release ../threads_src/Session.cpp || cmake_object_order_depends_target_coursework
   DEP_FILE = CMakeFiles/coursework.dir/threads_src/Session.cpp.o.d
-  FLAGS = -g -l sqlite3 -lpthread
+  FLAGS = -O2 -DNDEBUG -l sqlite3 -lpthread
   INCLUDES = -isystem /usr/include/vlc -isystem /usr/include/python3.9
   OBJECT_DIR = CMakeFiles/coursework.dir
   OBJECT_FILE_DIR = CMakeFiles/coursework.dir/threads_src
@@ -88,8 +88,8 @@ build CMakeFiles/coursework.dir/threads_src/Session.cpp.o: CXX_COMPILER__coursew
 #############################################
 # Link the executable coursework
 
-build coursework: CXX_EXECUTABLE_LINKER__coursework_Debug CMakeFiles/coursework.dir/main.cpp.o CMakeFiles/coursework.dir/threads_src/Session.cpp.o | /usr/lib64/libsqlite3.so /usr/lib64/libvlc.so /usr/lib64/libpython3.9.so
-  FLAGS = -g
+build coursework: CXX_EXECUTABLE_LINKER__coursework_Release CMakeFiles/coursework.dir/main.cpp.o CMakeFiles/coursework.dir/threads_src/Session.cpp.o | /usr/lib64/libsqlite3.so /usr/lib64/libvlc.so /usr/lib64/libpython3.9.so
+  FLAGS = -O2 -DNDEBUG
   LINK_LIBRARIES = /usr/lib64/libsqlite3.so  /usr/lib64/libvlc.so  -lpthread  /usr/lib64/libpython3.9.so
   OBJECT_DIR = CMakeFiles/coursework.dir
   POST_BUILD = :

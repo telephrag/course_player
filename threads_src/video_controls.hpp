@@ -11,16 +11,17 @@ enum Input
     next, 
     prev, 
     playlist,
-    list
+    stop
 };
 
-const int INPUT_SIGNAL_COUNT = 3;
-const std::array<std::string, INPUT_SIGNAL_COUNT> input_signals{{ "next", "prev", "playlist" }};
+const int INPUT_SIGNAL_COUNT = 4;
+const std::array<std::string, INPUT_SIGNAL_COUNT> input_signals{{ "next", "prev", "playlist", "stop" }};
 
 std::map<std::string, Input> input_map = {
         { "next",     Input::next     }, 
         { "prev",     Input::prev     },
-        { "playlist", Input::playlist }
+        { "playlist", Input::playlist },
+        { "stop",     Input::stop     }
     };
     
 std::string current_input = "";
@@ -35,6 +36,7 @@ extern Playlist current_playlist;
 void next_track();
 void prev_track();
 void set_playlist();
+void stop_playback();
 void handle_input();
 
 
@@ -66,9 +68,9 @@ void listen_for_input()
             current_input = input;
             handle_input();
             
-            std::system("clear");
             current_input = "";
             cond_var.notify_one();
+            std::system("clear");
         }
     }
 }
@@ -86,6 +88,9 @@ void handle_input()
             break;
         case playlist:
             set_playlist();
+            break;
+        case stop:
+            stop_playback();
             break;
     }
 }
@@ -125,3 +130,13 @@ void set_playlist()
     std::system("clear");
     //input_sent = false;
 }
+
+
+void stop_playback()
+{
+    current_played = 0;
+    current_playlist.clear();
+    std::cout << "Stopping playback. Clearing current playlist..." << std::endl;
+    std::this_thread::sleep_for( std::chrono::milliseconds(500) );
+}
+

@@ -106,8 +106,8 @@ std::string get_play_mrl (
     Py_ssize_t* size = nullptr; 
     wchar_t* play_mrl_wchar = PyUnicode_AsWideCharString(result, size); // TODO free memory
     
-    std::wstring ws( play_mrl_wchar );
-    std::string play_mrl_str( ws.begin(), ws.end() );
+    std::wstring ws(play_mrl_wchar);
+    std::string play_mrl_str(ws.begin(), ws.end());
     delete [] play_mrl_wchar;
     
     Py_XDECREF(py_module_name);
@@ -129,24 +129,24 @@ void play_music()
     
     #define min_logs 1
     #if min_logs
-        const char *const arg[] = {"--preferred-resolution=720", "--no-video"};
-        instance = std::make_shared<VLC::Instance>(VLC::Instance(2, arg));
+        const char *const arg[] = {"--preferred-resolution=720", "--no-video", "-q"};
+        instance = std::make_shared<VLC::Instance>(VLC::Instance(3, arg));
     #else
         const char *const arg[] = {"--preferred-resolution=720", "--no-video", "-vv"};
         instance = std::make_shared<VLC::Instance>(VLC::Instance(3, arg));
     #endif
         
-    std::unique_lock<std::mutex> ulm (mtx); 
     
     while (true)
     {
-        std::this_thread::sleep_for (std::chrono::seconds(1));
-        cond_var.wait(
-            ulm,
-            []{ return (current_playlist.get_length() > 0); }
-        );
+//         std::this_thread::sleep_for (std::chrono::seconds(1));
+//         cond_var.wait(
+//             ulm,
+//             []{ return (current_playlist.get_length() > 0); }
+//         );
+        std::unique_lock<std::mutex> ulm (mtx); 
         
-        while(true)
+        while(current_playlist.get_length() > 0)
         {
             input_sent = false;
             
@@ -177,6 +177,8 @@ void play_music()
                 std::chrono::milliseconds(duration),
                 [] { return input_sent; }
             );
+            
+            std::system("clear");
 
             if (input_sent)
             {

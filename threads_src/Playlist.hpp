@@ -76,4 +76,10 @@ public:
     {
         return this->url_vector;
     }
+    
+    
+    void clear()
+    {
+        this->url_vector.clear();
+    }
 };
