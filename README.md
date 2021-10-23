@@ -16,7 +16,7 @@
 ```
 git clone https://github.com/trofchik/course_player
 cd course_player
-cp threads_src/get_str.py ~/usr/lib64/python3.9/
+cp threads_src/get_str.py /usr/lib64/python3.9/
 cd build
 ```
 Удалить из папки `build` всё кроме `test.db`
